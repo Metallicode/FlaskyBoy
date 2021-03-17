@@ -1,25 +1,15 @@
 from flask import Flask, json, request, redirect, jsonify
-import os
 import urllib.request
 from werkzeug.utils import secure_filename
+from globalconstants import global_constants_dict
+import auxfunctions 
+from applicationsingelton import ApplicationSingelton
+from Views.indexview import index
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+singelton = ApplicationSingelton.instance()
+FLASK_APP=singelton.app
 
-base_path = os.path.abspath(os.path.dirname(__file__))
-
-app = Flask(__name__)
-app.secret_key = "secret key"
-
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
-
-app = Flask(__name__)
-
-
-def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/file-upload', methods=['POST'])
+@singelton.app.route('/file-upload', methods=['POST'])
 def upload_file():
 
 	print(request)
@@ -34,9 +24,9 @@ def upload_file():
 		resp = jsonify({'message' : 'No file selected for uploading'})
 		resp.status_code = 400
 		return resp
-	if file and allowed_file(file.filename):
+	if file and auxfunctions.allowed_file(file.filename):
 		filename = secure_filename(file.filename)
-		file.save(os.path.join(base_path, filename))
+		file.save(os.path.join(global_constants_dict["base_path"], filename))
 		resp = jsonify({'message' : 'File successfully uploaded'})
 		resp.status_code = 201
 		return resp
@@ -45,18 +35,12 @@ def upload_file():
 		resp.status_code = 400
 		return resp
 
-
-@app.route('/')
+@singelton.app.route('/')
 def index():
 	return f'This is Index Page'
 
-
-@app.route('/get_data')
+@singelton.app.route('/get_data')
 def get_data():
 	l = ['bob','bill','joe']
 	return json.dumps(l)
 
-
-@app.route('/admin')
-def admin():
-	return "<h1>you are Admin</h1>"	
