@@ -3,6 +3,6 @@ import Models.modelimports
 from flask import request
 singelton = ApplicationSingelton.instance()
 
-@singelton.app.route('/')
-def index():
-	return f'hello index'
+@singelton.app.route('/admin')
+def admin():
+	return f'this is admin page'

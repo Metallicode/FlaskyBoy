@@ -4,7 +4,8 @@ from werkzeug.utils import secure_filename
 from globalconstants import global_constants_dict
 import auxfunctions 
 from applicationsingelton import ApplicationSingelton
-from Views.indexview import index
+import Views.views 
+import API.applicationapi 
 
 singelton = ApplicationSingelton.instance()
 FLASK_APP=singelton.app
@@ -35,12 +36,4 @@ def upload_file():
 		resp.status_code = 400
 		return resp
 
-@singelton.app.route('/')
-def index():
-	return f'This is Index Page'
-
-@singelton.app.route('/get_data')
-def get_data():
-	l = ['bob','bill','joe']
-	return json.dumps(l)
 
